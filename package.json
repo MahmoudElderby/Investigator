@@ -11,6 +11,14 @@
     "installer/",
     "README.md"
   ],
+  "dependencies": {
+    "@inquirer/prompts": "^7.0.0",
+    "commander": "^12.1.0",
+    "fast-glob": "^3.3.2",
+    "fs-extra": "^11.2.0",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.6.0"
+  },
   "engines": {
     "node": ">=20"
   },
@@ -27,6 +35,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/example/investigator-kit"
+    "url": "https://github.com/MahmoudElderby/Investigator.git"
   }
 }
