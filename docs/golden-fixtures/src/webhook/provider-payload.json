@@ -1,0 +1,8 @@
+{
+  "requestID": "prov-req-8842-abc",
+  "eventType": "order.created",
+  "payload": {
+    "orderId": "ORD-9912",
+    "amount": 149.99
+  }
+}

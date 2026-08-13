@@ -256,3 +256,25 @@ is re-runnable.
 - Writing fixes to any target codebase — Investigator only investigates and recommends.
 - Hosts beyond Cursor and Claude Code (design for extensibility, implement these two).
 - Live production credentials in this repo — all examples use placeholders.
+
+## Amendments
+
+**2026-08-13 — Gate A clarification session** (user decisions recorded in
+`specs/001-investigator-kit/autopilot-assumptions.md`; spec touchpoints FR-021,
+FR-021a, FR-004 step 0, US5, SC-007):
+
+The following **supersedes** the original wording in §3.1 step 0 and §3.4
+(case-library index columns) without rewriting those sections in place:
+
+1. **Case-library lookup** — Step 0 is now **LLM-driven semantic matching**
+   over **all** documented fields on **every** row in `cases/index.md` (not
+   limited to symptom signature and reusable-pattern tags alone). The
+   orchestrator cites matched prior case id(s) and states match reasoning in
+   the investigation plan; prior root causes steer investigation only and are
+   never promoted to conclusions.
+
+2. **Case index schema** — Each row in `cases/index.md` MUST include an
+   additional **concise RCA / root-cause summary** column (≥ 1 sentence,
+   ≤ ~3 sentences) between symptom signature and root cause(s), written
+   specifically to give semantic matching enough substance to identify similar
+   prior incidents.

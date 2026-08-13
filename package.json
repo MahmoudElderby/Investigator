@@ -1,0 +1,32 @@
+{
+  "name": "investigator-kit",
+  "version": "0.1.0",
+  "description": "Portable AI investigation system for production incident root-cause analysis",
+  "type": "module",
+  "bin": {
+    "investigator-kit": "./installer/bin/cli.js"
+  },
+  "files": [
+    "core/",
+    "installer/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "investigation",
+    "rca",
+    "incident",
+    "cursor",
+    "claude"
+  ],
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/investigator-kit"
+  }
+}

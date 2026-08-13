@@ -1,0 +1,87 @@
+# Investigator .investigator/ YAML schemas (documentation contract)
+# Validated by init skill + templates; installer scaffolds defaults.
+
+config_yml:
+  description: Project Investigator configuration
+  required_keys:
+    - host
+    - knowledge_source
+    - model_tiers
+    - host_model_map
+    - data_sources
+  properties:
+    host:
+      enum: [cursor, claude]
+      note: Set by installer at scaffold from CLI host selection (FR-051a); not inferred by init
+    knowledge_source:
+      enum: [docki, docs_folder, codebase_scan]
+    knowledge_path:
+      type: string
+      note: Required when knowledge_source is docs_folder
+    model_tiers:
+      type: object
+      required_agents:
+        orchestrator: { enum: [deep, mid, fast], default: deep }
+        inv-code-rca: { enum: [deep, mid, fast], default: deep }
+        inv-vendor-compare: { enum: [deep, mid, fast], default: deep }
+        inv-data-rca: { enum: [deep, mid, fast], default: mid }
+        inv-log-rca: { enum: [deep, mid, fast], default: fast }
+        inv-report: { enum: [deep, mid, fast], default: mid }
+    host_model_map:
+      type: object
+      required_keys: [host, deep, mid, fast]
+      properties:
+        host: { enum: [cursor, claude], note: "Set by installer at scaffold (FR-051a)" }
+        deep: { type: string, examples: [inherit, claude-opus-4-6] }
+        mid: { type: string, examples: [inherit, composer-2.5-fast] }
+        fast: { type: string, examples: [inherit, gemini-3-flash] }
+    data_sources:
+      type: array
+      items:
+        required: [name, kind, access_mode]
+        properties:
+          name: { type: string, pattern: "^[a-z0-9-]+$" }
+          kind: { type: string }
+          access_mode:
+            enum: [manual, mcp, cli]
+            default: manual
+          mcp_server: { type: string, optional: true }
+          cli_wrapper: { type: string, optional: true }
+
+registry_yml:
+  description: Playbook and subagent bindings
+  required_keys: [playbooks]
+  host_transform:
+    description: Installer rewrites skill_path from canonical template at scaffold (FR-051b)
+    canonical_placeholder: "{{HOST_SKILLS}}/<playbook-name>/SKILL.md"
+    cursor_output: ".cursor/skills/<playbook-name>/SKILL.md"
+    claude_output: ".claude/skills/<playbook-name>/SKILL.md"
+  playbooks_item:
+    required: [id, tool, skill_path, subagents]
+    examples:
+      cursor:
+        id: playbook-mssql
+        tool: mssql
+        skill_path: .cursor/skills/playbook-mssql/SKILL.md
+        subagents: [inv-data-rca]
+        sources: [mssql-prod]
+      claude:
+        id: playbook-mssql
+        tool: mssql
+        skill_path: .claude/skills/playbook-mssql/SKILL.md
+        subagents: [inv-data-rca]
+        sources: [mssql-prod]
+
+cases_index:
+  description: Markdown table in cases/index.md
+  column_order:
+    - case_id
+    - symptom_signature
+    - rca_summary
+    - root_causes
+    - services
+    - confidence
+    - tags
+  case_id_format:
+    primary: "YYYYMMDD-<kebab-slug>"
+    fallback: "YYYYMMDD-HHMM-<random4>"
