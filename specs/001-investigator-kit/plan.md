@@ -55,6 +55,7 @@ specs/001-investigator-kit/
 │   ├── cli-installer.md
 │   ├── agent-dialect-transform.md
 │   ├── report-output.md
+│   ├── direction-brief.md
 │   ├── config-schemas.yml
 │   └── secret-redaction.md
 ├── spec.md
@@ -142,12 +143,14 @@ target-project/
 
 - Author `core/skills/investigator/SKILL.md` with full SOP:
   - Step 0: LLM semantic case-library lookup (FR-021a)
-  - Intake, dispatch, challenge protocol, evidence ledger, confidence rubric
+  - Intake, self-interrogation (FR-058), visible Direction Brief (FR-059),
+    dispatch, challenge protocol, evidence ledger, confidence rubric
   - Case close: memories + index row with RCA summary
 - Include case id assignment rules (`YYYYMMDD-<slug>` / fallback)
-- Reference `contracts/report-output.md` and `contracts/secret-redaction.md`
+- Reference `contracts/report-output.md`, `contracts/secret-redaction.md`,
+  and `contracts/direction-brief.md`
 
-**Exit**: Skill prose covers FR-004–FR-009, FR-021, FR-021a.
+**Exit**: Skill prose covers FR-004–FR-009, FR-021, FR-021a, FR-058, FR-059.
 
 ### Phase 3 — Subagents + playbooks (BRIEF §9.3)
 
@@ -201,6 +204,7 @@ target-project/
 | Case matching | LLM semantic over full index row incl. RCA summary |
 | Secrets | Regex + entropy + key-name; `[REDACTED]`; report-step fail |
 | Case IDs | `YYYYMMDD-<slug>` / `YYYYMMDD-HHMM-<random4>` fallback |
+| Visible direction | Self-interrogation until ANSWERED/PARKED; Direction Brief before dispatch; never all specialists by default |
 
 ## Risks & Mitigations
 
@@ -227,6 +231,7 @@ target-project/
 | CLI contract | `specs/001-investigator-kit/contracts/cli-installer.md` |
 | Agent transform | `specs/001-investigator-kit/contracts/agent-dialect-transform.md` |
 | Report contract | `specs/001-investigator-kit/contracts/report-output.md` |
+| Direction Brief | `specs/001-investigator-kit/contracts/direction-brief.md` |
 | Config schemas | `specs/001-investigator-kit/contracts/config-schemas.yml` |
 | Secret redaction | `specs/001-investigator-kit/contracts/secret-redaction.md` |
 

@@ -56,8 +56,10 @@ An on-call engineer receives a production ticket: a downstream provider's webhoo
 started returning "record not found" errors, and shortly after, a database
 operation began hanging past the 35-second distributed lock and timing out. The
 engineer opens their AI agent, hands the ticket to the Investigator orchestrator,
-and asks for a root-cause analysis. The orchestrator plans the investigation,
-dispatches its specialist subagents independently, cross-examines their findings,
+and asks for a root-cause analysis. The orchestrator interrogates itself until
+every question is answered or parked, shows a Direction Brief (problem, Q→A log,
+who it will send and who it will skip), then dispatches only the specialists
+with a mission, independently, cross-examines their findings,
 records evidence in the case ledger, and produces an ELI5-first RCA report that
 identifies **two** root causes: (a) the provider sends the correlation field as
 `requestID` while our DTO expects `requestIdHash`, and (b) an `nvarchar(max)`
@@ -78,7 +80,8 @@ an unindexed `nvarchar(max)` lookup, a 35-second distributed lock, and a SQL
 timeout 258 event). Run the orchestrator on the incident. Verify the produced
 report identifies both root causes with non-low confidence, follows the
 ELI5-first output contract, and cites evidence from at least two independent
-subagents.
+subagents. Also verify `plan.md` contains a Direction Brief written before
+dispatch, with a self-interrogation log and explicit send/skip rationale.
 
 **Acceptance Scenarios**:
 
@@ -101,6 +104,12 @@ subagents.
    cause(s), services touched, confidence, and reusable-pattern tags, and
    `cases/<case-id>/` contains the ticket, plan, evidence ledger, challenge log,
    and report.
+5. **Given** the engineer has handed over the ticket, **When** the orchestrator
+   finishes intake, **Then** the engineer can see a Direction Brief in the
+   session *before* any specialist runs: the problem it thinks it is solving,
+   the questions it asked itself with ANSWERED/PARKED status, ranked hypotheses,
+   which subagents it will send (and why) and which it will skip (and why).
+   It does not invoke every specialist by default.
 
 ---
 
@@ -363,6 +372,13 @@ case index.
 - **Concurrent runs of two subagents on the same case**: each writes to its
   own ledger section; the orchestrator merges without letting them see each
   other's conclusions before the challenge step (§3.1).
+- **Incomplete ticket (no time window, environment, or impact)**: the
+  orchestrator parks those as user-owned questions, shows the Direction Brief,
+  and waits — it does not invent answers or dispatch yet.
+- **User redirects after seeing the Direction Brief**: revise interrogation
+  and brief, then dispatch the updated set; do not keep the original plan.
+- **Temptation to send every specialist**: forbidden. An agent with no PARKED
+  question and no confirm/kill test to run is listed under **Not sending yet**.
 
 ## Requirements *(mandatory)*
 
@@ -384,9 +400,11 @@ case index.
 - **FR-004**: The orchestrator MUST run in the main agent session and its
   standard operating procedure MUST perform, in order: (0) LLM-driven
   semantic case-library lookup against `cases/index.md` (see FR-021a),
-  (1) intake and hypothesis formation, (2) independent subagent dispatch,
-  (3) challenge protocol, (4) evidence-ledger maintenance, (5) final report
-  with confidence, (6) case closure with memory updates and index entry.
+  (1) intake, self-interrogation (FR-058), visible Direction Brief (FR-059),
+  and hypothesis formation, (2) independent subagent dispatch of only the
+  specialists named in the brief, (3) challenge protocol, (4) evidence-ledger
+  maintenance, (5) final report with confidence, (6) case closure with memory
+  updates and index entry.
 - **FR-005**: The orchestrator MUST dispatch subagents independently so that
   no subagent sees another subagent's conclusions before challenge time.
 - **FR-006**: The orchestrator MUST maintain an evidence ledger where every
@@ -400,6 +418,26 @@ case index.
 - **FR-008**: The orchestrator MUST cross-examine each subagent's findings
   using evidence from the other subagents, dispatch follow-ups to resolve
   contradictions, and log all challenges to the case's challenge log.
+  Before each follow-up dispatch it MUST run a short self-interrogation
+  (FR-058) and show an updated Direction Brief (FR-059).
+- **FR-058**: Before the first specialist dispatch, the orchestrator MUST
+  interrogate **itself** (not the user) until every question is either
+  ANSWERED from available context or PARKED as UNKNOWN with a named owner
+  (a subagent, a playbook query, or the user). It MUST cover failure vs
+  symptom, scope, time and change, correlation, hypotheses, evidence map,
+  agent selection, and the cost of skipping an agent. It MUST NOT invent
+  facts to close questions. It MUST ask the user only for PARKED items the
+  user alone can answer. A hard cap of 16 questions applies; leftovers stay
+  PARKED with owners.
+- **FR-059**: The orchestrator MUST show a Direction Brief to the user in
+  the session and persist it in `cases/<case-id>/plan.md` before any
+  specialist runs. The brief MUST include: problem framing (1–3 sentences);
+  the self-interrogation log; ranked hypotheses each with confirm and kill
+  tests; agents sending now (with the PARKED questions they own) and agents
+  not sending yet (with reasons); and still-unknown items. It MUST NOT
+  dispatch all specialists by default. It MUST NOT wait for a generic
+  approval when the dispatch gate is met. If framing is UNKNOWN or a PARKED
+  question is user-owned, it MUST wait for those answers before dispatch.
 - **FR-009**: On case close, the orchestrator MUST update
   `memory/orchestrator.md` and per-subagent memories with new lessons, and
   add an entry to `cases/index.md` with case id, symptom signature, a
@@ -655,8 +693,12 @@ case index.
   Cursor or Claude Code. Determines file placement and agent frontmatter
   dialect.
 - **Orchestrator (`investigator`)**: Skill that runs in the main agent
-  session and executes the seven-step SOP. Owns the evidence ledger and the
-  challenge log for each case.
+  session and executes the seven-step SOP. Owns the evidence ledger, the
+  challenge log, and the visible Direction Brief for each case.
+- **Direction Brief**: User-visible investigation direction produced during
+  intake (and again before follow-up dispatches): problem framing, self-
+  interrogation log, hypotheses, specialists sending / not sending, and
+  still-unknown items. Persisted in `plan.md`.
 - **Subagent**: One of five thin roles (`inv-log-rca`, `inv-data-rca`,
   `inv-code-rca`, `inv-vendor-compare`, `inv-report`) with a defined scope,
   model tier, guardrails, memory protocol, and output contract.
@@ -737,6 +779,13 @@ case index.
 - **SC-010**: The installer completes its work with zero questions asked
   beyond host selection (only when no `--cursor`/`--claude` flag was passed)
   and an overwrite confirmation on re-install.
+- **SC-011**: Before the first specialist dispatch on any case, the
+  orchestrator's session output and `cases/<case-id>/plan.md` both contain a
+  Direction Brief that lists self-interrogation Q→A (ANSWERED or PARKED),
+  at least two hypotheses, at least one specialist under **Sending now**,
+  and every remaining core specialist except `inv-report` under **Not
+  sending yet** or **Sending now** — so the engineer can see the direction
+  without every specialist being invoked.
 
 ## Assumptions
 

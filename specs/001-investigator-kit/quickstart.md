@@ -102,6 +102,7 @@ In agent, invoke **`investigator`** skill with ticket text describing:
 | Report shape | Six sections in order |
 | Evidence | ≥2 subagent domains represented |
 | Secrets | No FR-030 patterns under `.investigator/` |
+| Direction Brief | Shown before dispatch; `plan.md` has interrogation log + send/skip |
 
 ### 4.3 Repeat per host
 

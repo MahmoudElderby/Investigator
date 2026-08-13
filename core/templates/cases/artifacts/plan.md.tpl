@@ -4,14 +4,42 @@
 
 <!-- Step 0: matched case id(s), match reasoning, prior root cause as lead only -->
 
-## Hypotheses
+## Direction Brief
 
-<!-- Numbered hypotheses with evidence needed -->
+### Problem I think we're solving
+
+<!-- 1–3 sentences, plain language -->
+
+### Self-interrogation log
+
+<!-- Q → ANSWERED/PARKED + answer or owner. Cover all eight categories. -->
+
+### Hypotheses
+
+<!-- Ranked; each with confirm test and kill test -->
+
+### Direction
+
+**Sending now**
+
+<!-- Agent, playbook, PARKED questions it must answer -->
+
+**Not sending yet**
+
+<!-- Agent and why (premature / out of scope / no question for it) -->
+
+### Still unknown
+
+<!-- PARKED items and owners; user-owned items block dispatch -->
 
 ## Subagent dispatch plan
 
-<!-- Which subagents, which playbooks, independence note -->
+<!-- Copy of Sending now: which subagents, which playbooks, independence note -->
 
 ## Prior case citations
 
 <!-- case-id links and why they matter -->
+
+## Follow-up direction
+
+<!-- Challenge-protocol re-interrogation before extra dispatches; omit if unused -->

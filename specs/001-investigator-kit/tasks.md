@@ -71,6 +71,7 @@
 
 - [X] T022 [US5] Create `core/skills/investigator/SKILL.md` with SOP step 0: LLM semantic lookup over every row and field in `cases/index.md`, cite matched case id(s) and match reasoning in `plan.md`, prior root cause as lead only (FR-004 step 0, FR-021a)
 - [X] T023 [US1] Add SOP steps 1–2 to `core/skills/investigator/SKILL.md`: intake, hypothesis formation, independent subagent dispatch with no cross-agent conclusion sharing (FR-004, FR-005)
+- [X] T023a [US1] Add self-interrogation loop (FR-058) and visible Direction Brief dispatch gate (FR-059) to `core/skills/investigator/SKILL.md`; expand `plan.md.tpl`; add `contracts/direction-brief.md`
 - [X] T024 [US1] Add SOP step 3 to `core/skills/investigator/SKILL.md`: challenge protocol — cross-examine findings, follow-up dispatches, log to `challenge-log.md` (FR-008)
 - [X] T025 [US1] Add SOP step 4 to `core/skills/investigator/SKILL.md`: evidence ledger maintenance with DECLARED/OBSERVED/INFERRED/UNKNOWN classification and no silent promotion (FR-006)
 - [X] T026 [US1] Add SOP steps 5–6 to `core/skills/investigator/SKILL.md`: dispatch `inv-report`, apply confidence rubric (overall + per-finding with visible reasoning), case close with memory updates and index row including RCA summary column (FR-007, FR-009)

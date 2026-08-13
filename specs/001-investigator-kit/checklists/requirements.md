@@ -52,6 +52,11 @@
   (FR-030, FR-031, SC-004), and case-ID format (FR-021). Full Q/A recorded
   in `../spec.md` §Clarifications and `../autopilot-assumptions.md`;
   question resolution status in `../clarify-questions.md`.
+- **2026-08-13 visible direction**: owner asked that the orchestrator make
+  dispatch decisions visible and interrogate itself until questions are
+  answered. Encoded as FR-058, FR-059, US1 scenario 5, SC-011, and
+  `contracts/direction-brief.md`. Self-talk (not a user questionnaire);
+  specialists are chosen from the brief, not invoked all by default.
 - All checklist items above remain checked after the clarification session:
   the new content is behavior contract (not tech choice), improves
   testability of FR-038, FR-049, FR-021, and SC-004, and does not
