@@ -8,7 +8,8 @@
   },
   "files": [
     "core/",
-    "installer/",
+    "installer/bin/",
+    "installer/lib/",
     "README.md"
   ],
   "dependencies": {
