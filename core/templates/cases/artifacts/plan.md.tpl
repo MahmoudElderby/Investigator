@@ -12,7 +12,7 @@
 
 ### Self-interrogation log
 
-<!-- Q → ANSWERED/PARKED + answer or owner. Cover all eight categories. -->
+<!-- Q → ANSWERED/PARKED + answer or owner. Always-categories required; join/time only if this case needs them. -->
 
 ### Hypotheses
 
@@ -31,6 +31,10 @@
 ### Still unknown
 
 <!-- PARKED items and owners; user-owned items block dispatch -->
+
+### Reused how-to
+
+<!-- Memory rows used this case, or "none (not needed / not learned yet)" -->
 
 ## Subagent dispatch plan
 

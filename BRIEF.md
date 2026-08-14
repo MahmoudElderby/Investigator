@@ -305,3 +305,12 @@ already reflects the new wording.
    framing is UNKNOWN or a PARKED question is user-owned. If the user
    redirects, revise the brief before dispatching. Repeat a short
    interrogation before challenge-protocol follow-up dispatches.
+
+**2026-08-14 — Situational how-to memory (FR-060)**:
+
+Join maps and correlation field names are **not** a preflight and **not**
+a user interview. A case that is local to code may never need them. A later
+case that must join systems **discovers** the map with read-only rights, then
+writes a **Reusable how-to** row. The next case that needs the same join
+reuses that row (`reused from <case-id>`) instead of rediscovering names.
+`profile.md` Correlation keys are a cache only.

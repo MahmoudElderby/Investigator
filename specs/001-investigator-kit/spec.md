@@ -424,22 +424,37 @@ case index.
   interrogate **itself** (not the user) until every question is either
   ANSWERED from available context or PARKED as UNKNOWN with a named owner
   (a subagent, a playbook query, or the user). It MUST cover failure vs
-  symptom, scope, time and change, correlation, hypotheses, evidence map,
-  agent selection, and the cost of skipping an agent. It MUST NOT invent
-  facts to close questions. It MUST ask the user only for PARKED items the
-  user alone can answer. A hard cap of 16 questions applies; leftovers stay
-  PARKED with owners.
+  symptom, scope, hypotheses, evidence map, agent selection, and the cost
+  of skipping an agent. Time-and-change and join/how-to questions are
+  situational (FR-060): include them only when this case needs them. It
+  MUST NOT invent facts to close questions. It MUST ask the user only for
+  PARKED items the user alone can answer, and MUST NOT ask the user for
+  correlation field names. A hard cap of 16 questions applies; leftovers
+  stay PARKED with owners.
 - **FR-059**: The orchestrator MUST show a Direction Brief to the user in
   the session and persist it in `cases/<case-id>/plan.md` before any
   specialist runs. The brief MUST include: problem framing (1–3 sentences);
   the self-interrogation log; ranked hypotheses each with confirm and kill
   tests; agents sending now (with the PARKED questions they own) and agents
-  not sending yet (with reasons); and still-unknown items. It MUST NOT
+  not sending yet (with reasons); still-unknown items; and which Reusable
+  how-to memory rows were used, or that none were needed (FR-060). It MUST NOT
   dispatch all specialists by default. It MUST NOT wait for a generic
   approval when the dispatch gate is met. If framing is UNKNOWN or a PARKED
   question is user-owned, it MUST wait for those answers before dispatch.
+- **FR-060**: Join maps, correlation field names, payload locations, and
+  query shapes are **situational**. The orchestrator MUST NOT require them
+  on every case, MUST NOT ask the user to supply them, and MUST NOT treat
+  `profile.md` Correlation keys as a permission gate. When a case needs a
+  join, the orchestrator MUST consult Reusable how-to memory first and
+  reuse a matching row (`reused from <case-id>`) so specialists start
+  there instead of rediscovering names. When no row exists, a specialist
+  MUST discover the how-to from code, schema, payloads, or logs (read-only)
+  and, on case close, append a Reusable how-to row. A case that needed no
+  join MUST NOT write a correlation lesson.
 - **FR-009**: On case close, the orchestrator MUST update
-  `memory/orchestrator.md` and per-subagent memories with new lessons, and
+  `memory/orchestrator.md` and per-subagent memories with new lessons
+  (including Reusable how-to rows when this case discovered a join, fetch
+  path, or query shape — FR-060), and
   add an entry to `cases/index.md` with case id, symptom signature, a
   concise RCA / root-cause summary (≥ 1 sentence, ≤ ~3 sentences,
   sufficient for LLM semantic matching), root cause(s), services,
@@ -697,8 +712,12 @@ case index.
   challenge log, and the visible Direction Brief for each case.
 - **Direction Brief**: User-visible investigation direction produced during
   intake (and again before follow-up dispatches): problem framing, self-
-  interrogation log, hypotheses, specialists sending / not sending, and
-  still-unknown items. Persisted in `plan.md`.
+  interrogation log, hypotheses, specialists sending / not sending,
+  still-unknown items, and which Reusable how-to rows were reused. Persisted in `plan.md`.
+- **Reusable how-to**: A memory-table row (when needed, what, where/how,
+  learned-in case id) for join maps, payload locations, and query shapes.
+  Written only when a case had to discover them; reused on later cases that
+  need the same thing. Not a mandatory preflight.
 - **Subagent**: One of five thin roles (`inv-log-rca`, `inv-data-rca`,
   `inv-code-rca`, `inv-vendor-compare`, `inv-report`) with a defined scope,
   model tier, guardrails, memory protocol, and output contract.
@@ -786,6 +805,10 @@ case index.
   and every remaining core specialist except `inv-report` under **Not
   sending yet** or **Sending now** — so the engineer can see the direction
   without every specialist being invoked.
+- **SC-012**: On a second case that needs the same join a prior case already
+  discovered, the Direction Brief cites `reused from <prior-case-id>` for
+  that how-to and does not re-derive the field names from a blank search.
+  A case that needs no join does not invent a correlation question.
 
 ## Assumptions
 

@@ -22,7 +22,9 @@ A list of questions the orchestrator asked **itself**. Each row:
 | Status | `ANSWERED` or `PARKED` |
 | Answer or owner | Closed answer (tag `INFERRED` if deduced) **or** named owner: subagent id, playbook query, or `user` |
 
-Coverage: at least one question in each mandatory category (failure vs symptom, scope, time & change, correlation, hypotheses, evidence map, agent selection, being wrong). Cap 16; leftover questions stay PARKED with owners.
+Coverage: at least one question in each **always** category (failure vs symptom, scope, hypotheses, evidence map, agent selection, being wrong). **Join / how-to** and **time & change** only if this case needs them. Cap 16; leftover questions stay PARKED with owners.
+
+If a join is needed and memory already has a matching Reusable how-to row, the log MUST cite `reused from <case-id>` instead of rediscovering field names.
 
 ### 3. Hypotheses
 
@@ -44,6 +46,10 @@ Prior-case root causes may appear only as lead hypotheses, never as conclusions.
 ### 5. Still unknown
 
 PARKED items and who owns them. User-owned items block dispatch until answered.
+
+### 6. Reused how-to
+
+Memory rows used in this case, or `none (not needed / not learned yet)`. The user is never the source of correlation field names.
 
 ## Visibility
 
