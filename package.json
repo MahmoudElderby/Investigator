@@ -1,5 +1,5 @@
 {
-  "name": "investigator-kit",
+  "name": "@mahmoudelderby/investigator-kit",
   "version": "0.2.0",
   "description": "Portable AI investigation system for production incident root-cause analysis",
   "type": "module",
@@ -32,7 +32,7 @@
   ],
   "license": "MIT",
   "publishConfig": {
-    "access": "public"
+    "registry": "https://npm.pkg.github.com"
   },
   "repository": {
     "type": "git",

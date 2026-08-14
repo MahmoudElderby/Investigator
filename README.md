@@ -5,9 +5,9 @@ Portable AI investigation system for production incident root-cause analysis.
 ## Install
 
 ```powershell
-npx investigator-kit init --cursor
+npx @mahmoudelderby/investigator-kit init --cursor
 # or
-npx investigator-kit init --claude
+npx @mahmoudelderby/investigator-kit init --claude
 ```
 
 Without flags, the CLI prompts you to choose a host (no auto-detection).
