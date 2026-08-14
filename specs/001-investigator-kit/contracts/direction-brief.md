@@ -4,7 +4,9 @@
 **Consumers**: The user (conversation) and `cases/<case-id>/plan.md`  
 **Requirements**: FR-058, FR-059
 
-The orchestrator MUST show this brief **before** the first specialist dispatch. It MUST also persist it in `plan.md`. Follow-up briefs MAY be appended under a `## Follow-up direction` heading.
+The orchestrator MUST persist the **full** brief in `plan.md`. Follow-up briefs MAY be appended under a `## Follow-up direction` heading.
+
+**Chat** MUST NOT receive the full interrogation log. Chat receives the status card + compact brief + steer in `contracts/status-card.md` (FR-061).
 
 ## Required sections (in order)
 
@@ -53,6 +55,6 @@ Memory rows used in this case, or `none (not needed / not learned yet)`. The use
 
 ## Visibility
 
-- The same content MUST appear in the user-visible session, not only in `plan.md`.
-- Do not wait for a generic approval if the dispatch gate in the orchestrator skill is met.
-- If the user redirects, revise this brief before dispatching.
+- Full brief: `plan.md` only.
+- Chat: status card + compact Direction Brief + steer (`contracts/status-card.md`).
+- If the user redirects, revise this brief and the status card before dispatching.

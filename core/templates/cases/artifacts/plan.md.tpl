@@ -47,3 +47,7 @@
 ## Follow-up direction
 
 <!-- Challenge-protocol re-interrogation before extra dispatches; omit if unused -->
+
+## Chat status card (copy of status.md)
+
+<!-- Mirror of the live card shown in chat; not a substitute for the full brief above -->

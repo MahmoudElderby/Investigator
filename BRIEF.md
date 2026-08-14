@@ -50,9 +50,9 @@ The orchestrator runs in the main agent session. Its standard operating procedur
 0. **Case-library lookup first**: search `cases/index.md` by symptom signature and
    reusable-pattern tags before planning anything new.
 1. Intake the ticket/incident, **interrogate itself until every question is
-   answered or parked**, **show a Direction Brief** (problem, Q→A log, hypotheses,
-   who to send and who to skip), then plan which subagents to dispatch — never
-   all specialists by default.
+   answered or parked**, write the **full** Direction Brief to `plan.md`,
+   **show a live status card + compact brief in chat**, **steer** (`Go` /
+   `Skip` / `Wrong service`) then dispatch — never all specialists by default.
 2. Dispatch **independent** subagents (each works alone from its own evidence; they do not
    see each other's conclusions, so they are not biased/distracted).
 3. **Challenge protocol**: the orchestrator cross-examines each subagent's findings using
@@ -314,3 +314,11 @@ case that must join systems **discovers** the map with read-only rights, then
 writes a **Reusable how-to** row. The next case that needs the same join
 reuses that row (`reused from <case-id>`) instead of rediscovering names.
 `profile.md` Correlation keys are a cache only.
+
+**2026-08-14 — Live status card + compact steer (FR-061)**:
+
+Chat is the on-call UI. The orchestrator posts a one-screen status card
+(problem, sending, skipped, latest) and a compact Direction Brief, then
+**ends the turn** so the user can steer (`Go` / `Skip <agent>` / `Wrong
+service`). Skip the wait only on explicit proceed in the ticket. The full
+Q→A log stays in `plan.md`. Refresh **Latest** as specialists run.

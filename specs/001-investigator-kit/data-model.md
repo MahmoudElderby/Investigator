@@ -140,7 +140,8 @@ Markdown table; **column order fixed** (FR-021):
 | File | Purpose |
 |------|---------|
 | `ticket.md` | Original incident intake |
-| `plan.md` | Direction Brief (problem, self-interrogation log, hypotheses with confirm/kill tests, sending now / not sending yet), subagent dispatch plan, **prior-case citations + match reasoning**, optional follow-up direction |
+| `plan.md` | Full Direction Brief (audit), dispatch plan, prior-case citations, optional follow-up direction |
+| `status.md` | Live status card shown in chat (problem, phase, sending, skipped, latest) |
 | `evidence-ledger.md` | Claims with DECLARED/OBSERVED/INFERRED/UNKNOWN + evidence links |
 | `challenge-log.md` | Cross-examination and contradiction resolution |
 | `report.md` | Final RCA per report contract |
@@ -148,9 +149,9 @@ Markdown table; **column order fixed** (FR-021):
 **Case lifecycle**:
 
 ```text
-OPEN → INTAKE → INTERROGATE/DIRECTION → DISPATCH → CHALLENGE → REPORT → CLOSE
-  │                 (visible brief; no dispatch until gate)        │
-  └─ step 0: semantic index lookup ───────────────────────────────┘
+OPEN → INTAKE → INTERROGATE → STEER (status card) → DISPATCH → CHALLENGE → REPORT → CLOSE
+  │              full brief in plan.md; compact card in chat            │
+  └─ step 0: semantic index lookup ─────────────────────────────────────┘
 ```
 
 On CLOSE: append index row, update memories (FR-009).

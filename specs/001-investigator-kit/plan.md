@@ -56,6 +56,7 @@ specs/001-investigator-kit/
 │   ├── agent-dialect-transform.md
 │   ├── report-output.md
 │   ├── direction-brief.md
+│   ├── status-card.md
 │   ├── config-schemas.yml
 │   └── secret-redaction.md
 ├── spec.md
@@ -148,7 +149,7 @@ target-project/
   - Case close: memories + index row with RCA summary
 - Include case id assignment rules (`YYYYMMDD-<slug>` / fallback)
 - Reference `contracts/report-output.md`, `contracts/secret-redaction.md`,
-  and `contracts/direction-brief.md`
+  and `contracts/direction-brief.md` / `contracts/status-card.md`
 
 **Exit**: Skill prose covers FR-004–FR-009, FR-021, FR-021a, FR-058, FR-059.
 
@@ -204,7 +205,7 @@ target-project/
 | Case matching | LLM semantic over full index row incl. RCA summary |
 | Secrets | Regex + entropy + key-name; `[REDACTED]`; report-step fail |
 | Case IDs | `YYYYMMDD-<slug>` / `YYYYMMDD-HHMM-<random4>` fallback |
-| Visible direction | Self-interrogation until ANSWERED/PARKED; Direction Brief before dispatch; never all specialists by default |
+| Visible direction | Compact status card + steer in chat; full brief in plan.md; never all specialists by default |
 
 ## Risks & Mitigations
 
@@ -232,6 +233,7 @@ target-project/
 | Agent transform | `specs/001-investigator-kit/contracts/agent-dialect-transform.md` |
 | Report contract | `specs/001-investigator-kit/contracts/report-output.md` |
 | Direction Brief | `specs/001-investigator-kit/contracts/direction-brief.md` |
+| Status card | `specs/001-investigator-kit/contracts/status-card.md` |
 | Config schemas | `specs/001-investigator-kit/contracts/config-schemas.yml` |
 | Secret redaction | `specs/001-investigator-kit/contracts/secret-redaction.md` |
 
