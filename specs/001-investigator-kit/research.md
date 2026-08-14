@@ -162,7 +162,7 @@ Any one signal + missing `registry.yml` playbook entry → offer onboarding inte
 |-------|------|-----|
 | Installer unit | Dialect transform, overwrite logic, path placement | Vitest + fixture canonical agents |
 | Installer integration | Fresh install into temp dir | Script in `installer/tests/` |
-| Kit content | Schema/template presence | Checklist in CI (future) |
+| Kit content | Schema/template presence; orchestrator Direction Brief headings | Vitest on `SKILL.md` + `plan.md.tpl` |
 | Golden E2E | Full RCA on fixtures | Documented manual/agent procedure in `quickstart.md` |
 
 No TDD mandate on skill prose; constitution is unratified (see plan Constitution Check).
@@ -193,6 +193,19 @@ host_model_map:
 User may edit concrete model ids post-init. Agent bodies reference tiers; frontmatter uses `inherit`.
 
 **Rationale**: BRIEF §3.5; FR-023–FR-025.
+
+---
+
+## R10 — Visible direction and self-interrogation
+
+**Decision**: Encode as **orchestrator skill prose** plus a `plan.md` template and `contracts/direction-brief.md`. The orchestrator asks **itself** questions until each is ANSWERED or PARKED (named owner), then shows a Direction Brief in the session before dispatch. It does not wait for a generic user OK; it waits only for user-owned PARKED questions or UNKNOWN framing. Specialists are selected from that brief — never all by default. Hard cap 16 questions.
+
+**Alternatives considered**:
+- **Silent planning in files only** — rejected; user cannot see direction.
+- **Ask the user a long questionnaire every case** — rejected; owner asked for self-questions, not a user interview.
+- **Always wait for explicit "go"** — rejected; slows on-call RCA when the brief is already complete.
+
+**Rationale**: Owner request 2026-08-13; FR-058, FR-059, SC-011.
 
 ---
 

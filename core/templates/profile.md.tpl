@@ -21,7 +21,7 @@ No credentials — reference data sources by name only.
 
 ## Correlation keys
 
-<!-- Fields used to tie requests across systems -->
+<!-- Cached join names learned on cases that needed them. Shortcut only — not a permission gate. Empty is fine. Agents discover and write back when a case needs a join. -->
 
 ## Known traps
 

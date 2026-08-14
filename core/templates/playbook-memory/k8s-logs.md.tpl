@@ -2,4 +2,12 @@
 
 Tool-truth lessons for Kubernetes logs. Dated bullet entries.
 
-<!-- Append lessons below -->
+## Reusable how-to
+
+| When needed | What | Where / how | Learned in |
+|-------------|------|-------------|------------|
+| | | | |
+
+## Lessons
+
+<!-- Append dated bullets below -->

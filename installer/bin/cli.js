@@ -7,12 +7,17 @@ import { fileURLToPath } from 'node:url';
 import { detectExisting, install, refreshHostInInvestigator } from '../lib/install.js';
 import { COMPLETION_MESSAGE, promptOverwriteGroups, resolveHost } from '../lib/prompts.js';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const pkg = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'),
+);
+
 const program = new Command();
 
 program
   .name('investigator-kit')
   .description('Portable AI investigation system installer')
-  .version('0.1.0');
+  .version(pkg.version);
 
 program
   .command('init')

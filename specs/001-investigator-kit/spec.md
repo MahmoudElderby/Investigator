@@ -56,8 +56,10 @@ An on-call engineer receives a production ticket: a downstream provider's webhoo
 started returning "record not found" errors, and shortly after, a database
 operation began hanging past the 35-second distributed lock and timing out. The
 engineer opens their AI agent, hands the ticket to the Investigator orchestrator,
-and asks for a root-cause analysis. The orchestrator plans the investigation,
-dispatches its specialist subagents independently, cross-examines their findings,
+and asks for a root-cause analysis. The orchestrator interrogates itself until
+every question is answered or parked, shows a Direction Brief (problem, Q→A log,
+who it will send and who it will skip), then dispatches only the specialists
+with a mission, independently, cross-examines their findings,
 records evidence in the case ledger, and produces an ELI5-first RCA report that
 identifies **two** root causes: (a) the provider sends the correlation field as
 `requestID` while our DTO expects `requestIdHash`, and (b) an `nvarchar(max)`
@@ -78,7 +80,8 @@ an unindexed `nvarchar(max)` lookup, a 35-second distributed lock, and a SQL
 timeout 258 event). Run the orchestrator on the incident. Verify the produced
 report identifies both root causes with non-low confidence, follows the
 ELI5-first output contract, and cites evidence from at least two independent
-subagents.
+subagents. Also verify `plan.md` contains a Direction Brief written before
+dispatch, with a self-interrogation log and explicit send/skip rationale.
 
 **Acceptance Scenarios**:
 
@@ -101,6 +104,12 @@ subagents.
    cause(s), services touched, confidence, and reusable-pattern tags, and
    `cases/<case-id>/` contains the ticket, plan, evidence ledger, challenge log,
    and report.
+5. **Given** the engineer has handed over the ticket, **When** the orchestrator
+   finishes intake, **Then** the engineer sees a live status card and a compact
+   Direction Brief in chat (problem, who is sent, who is skipped, H1/H2) *before*
+   any specialist runs, with steer options (`Go` / `Skip` / `Wrong service`),
+   and does **not** see the full interrogation log in chat (that stays in
+   `plan.md`). It does not invoke every specialist by default.
 
 ---
 
@@ -363,6 +372,13 @@ case index.
 - **Concurrent runs of two subagents on the same case**: each writes to its
   own ledger section; the orchestrator merges without letting them see each
   other's conclusions before the challenge step (§3.1).
+- **Incomplete ticket (no time window, environment, or impact)**: the
+  orchestrator parks those as user-owned questions, shows the Direction Brief,
+  and waits — it does not invent answers or dispatch yet.
+- **User redirects after seeing the Direction Brief**: revise interrogation
+  and brief, then dispatch the updated set; do not keep the original plan.
+- **Temptation to send every specialist**: forbidden. An agent with no PARKED
+  question and no confirm/kill test to run is listed under **Not sending yet**.
 
 ## Requirements *(mandatory)*
 
@@ -377,16 +393,19 @@ case index.
   canonical form.
 - **FR-003**: The kit MUST include template files for `profile.md`,
   `config.yml`, `registry.yml`, case artifacts (ticket, plan, ledger, challenge
-  log, report), and the case-library index.
+  log, report), the case-library index, and a per-case `status.md` card.
 
 #### B. Orchestrator skill `investigator` (BRIEF §3.1, §9 phase 2)
 
 - **FR-004**: The orchestrator MUST run in the main agent session and its
   standard operating procedure MUST perform, in order: (0) LLM-driven
   semantic case-library lookup against `cases/index.md` (see FR-021a),
-  (1) intake and hypothesis formation, (2) independent subagent dispatch,
-  (3) challenge protocol, (4) evidence-ledger maintenance, (5) final report
-  with confidence, (6) case closure with memory updates and index entry.
+  (1) intake, self-interrogation (FR-058), full Direction Brief in `plan.md`
+  plus compact live status card and steer in chat (FR-059, FR-061),
+  and hypothesis formation, (2) independent subagent dispatch of only the
+  specialists named in the brief, (3) challenge protocol, (4) evidence-ledger
+  maintenance, (5) final report with confidence, (6) case closure with memory
+  updates and index entry.
 - **FR-005**: The orchestrator MUST dispatch subagents independently so that
   no subagent sees another subagent's conclusions before challenge time.
 - **FR-006**: The orchestrator MUST maintain an evidence ledger where every
@@ -400,8 +419,53 @@ case index.
 - **FR-008**: The orchestrator MUST cross-examine each subagent's findings
   using evidence from the other subagents, dispatch follow-ups to resolve
   contradictions, and log all challenges to the case's challenge log.
+  Before each follow-up dispatch it MUST run a short self-interrogation
+  (FR-058), update `plan.md`, and refresh the live status card (FR-061).
+- **FR-058**: Before the first specialist dispatch, the orchestrator MUST
+  interrogate **itself** (not the user) until every question is either
+  ANSWERED from available context or PARKED as UNKNOWN with a named owner
+  (a subagent, a playbook query, or the user). It MUST cover failure vs
+  symptom, scope, hypotheses, evidence map, agent selection, and the cost
+  of skipping an agent. Time-and-change and join/how-to questions are
+  situational (FR-060): include them only when this case needs them. It
+  MUST NOT invent facts to close questions. It MUST ask the user only for
+  PARKED items the user alone can answer, and MUST NOT ask the user for
+  correlation field names. A hard cap of 16 questions applies; leftovers
+  stay PARKED with owners.
+- **FR-059**: The orchestrator MUST persist a **full** Direction Brief in
+  `cases/<case-id>/plan.md` before any specialist runs. The full brief MUST
+  include: problem framing (1–3 sentences); the self-interrogation log;
+  ranked hypotheses each with confirm and kill tests; agents sending now
+  (with the PARKED questions they own) and agents not sending yet (with
+  reasons); still-unknown items; and which Reusable how-to memory rows were
+  used, or that none were needed (FR-060). It MUST NOT dispatch all
+  specialists by default. It MUST NOT paste the interrogation log into chat
+  (chat UI is FR-061). If framing is UNKNOWN or a PARKED question is
+  user-owned, it MUST wait for those answers before dispatch.
+- **FR-061**: The orchestrator MUST use chat as the on-call UI: a live
+  **status card** (case id, problem ≤2 sentences, phase, sending, skipped,
+  need-from-you, latest one-liner) copied to `cases/<case-id>/status.md`,
+  plus a **compact Direction Brief** (H1/H2, why these agents, how-to).
+  Before the first dispatch it MUST post steer options (`Go`, `Skip <agent>`,
+  `Wrong service: <name>`), then end the turn and wait. It MUST skip the
+  wait only when the user's message already contains an explicit proceed
+  (`go`, `proceed`, `don't wait`, `autopilot`). It MUST refresh **Latest**
+  as each specialist starts or returns. It MUST NOT dump the interrogation
+  log into chat.
+- **FR-060**: Join maps, correlation field names, payload locations, and
+  query shapes are **situational**. The orchestrator MUST NOT require them
+  on every case, MUST NOT ask the user to supply them, and MUST NOT treat
+  `profile.md` Correlation keys as a permission gate. When a case needs a
+  join, the orchestrator MUST consult Reusable how-to memory first and
+  reuse a matching row (`reused from <case-id>`) so specialists start
+  there instead of rediscovering names. When no row exists, a specialist
+  MUST discover the how-to from code, schema, payloads, or logs (read-only)
+  and, on case close, append a Reusable how-to row. A case that needed no
+  join MUST NOT write a correlation lesson.
 - **FR-009**: On case close, the orchestrator MUST update
-  `memory/orchestrator.md` and per-subagent memories with new lessons, and
+  `memory/orchestrator.md` and per-subagent memories with new lessons
+  (including Reusable how-to rows when this case discovered a join, fetch
+  path, or query shape — FR-060), and
   add an entry to `cases/index.md` with case id, symptom signature, a
   concise RCA / root-cause summary (≥ 1 sentence, ≤ ~3 sentences,
   sufficient for LLM semantic matching), root cause(s), services,
@@ -655,8 +719,17 @@ case index.
   Cursor or Claude Code. Determines file placement and agent frontmatter
   dialect.
 - **Orchestrator (`investigator`)**: Skill that runs in the main agent
-  session and executes the seven-step SOP. Owns the evidence ledger and the
-  challenge log for each case.
+  session and executes the seven-step SOP. Owns the evidence ledger, the
+  challenge log, and the visible Direction Brief for each case.
+- **Direction Brief**: Full investigation direction in `plan.md` (problem,
+  interrogation log, hypotheses, send/skip, still-unknown, reused how-to).
+  Chat shows only the compact form via the status card (FR-061).
+- **Status card**: Live one-screen chat UI (case, problem, phase, sending,
+  skipped, need-from-you, latest) plus steer; copied to `status.md`.
+- **Reusable how-to**: A memory-table row (when needed, what, where/how,
+  learned-in case id) for join maps, payload locations, and query shapes.
+  Written only when a case had to discover them; reused on later cases that
+  need the same thing. Not a mandatory preflight.
 - **Subagent**: One of five thin roles (`inv-log-rca`, `inv-data-rca`,
   `inv-code-rca`, `inv-vendor-compare`, `inv-report`) with a defined scope,
   model tier, guardrails, memory protocol, and output contract.
@@ -737,6 +810,19 @@ case index.
 - **SC-010**: The installer completes its work with zero questions asked
   beyond host selection (only when no `--cursor`/`--claude` flag was passed)
   and an overwrite confirmation on re-install.
+- **SC-011**: Before the first specialist dispatch on any case,
+  `cases/<case-id>/plan.md` contains a full Direction Brief that lists
+  self-interrogation Q→A (ANSWERED or PARKED), at least two hypotheses, at
+  least one specialist under **Sending now**, and every remaining core
+  specialist except `inv-report` under **Not sending yet** or **Sending now**.
+- **SC-012**: On a second case that needs the same join a prior case already
+  discovered, the Direction Brief cites `reused from <prior-case-id>` for
+  that how-to and does not re-derive the field names from a blank search.
+  A case that needs no join does not invent a correlation question.
+- **SC-013**: Before the first specialist dispatch, chat contains a status
+  card (problem, sending, skipped, latest) and a compact brief, not the
+  full Q→A log; the orchestrator has ended the turn for steer unless the
+  ticket already contained an explicit proceed.
 
 ## Assumptions
 

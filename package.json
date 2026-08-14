@@ -1,10 +1,10 @@
 {
   "name": "investigator-kit",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Portable AI investigation system for production incident root-cause analysis",
   "type": "module",
   "bin": {
-    "investigator-kit": "./installer/bin/cli.js"
+    "investigator-kit": "installer/bin/cli.js"
   },
   "files": [
     "core/",
@@ -36,6 +36,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MahmoudElderby/Investigator.git"
+    "url": "git+https://github.com/MahmoudElderby/Investigator.git"
   }
 }

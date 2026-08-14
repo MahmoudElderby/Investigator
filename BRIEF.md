@@ -49,7 +49,10 @@ The orchestrator runs in the main agent session. Its standard operating procedur
 
 0. **Case-library lookup first**: search `cases/index.md` by symptom signature and
    reusable-pattern tags before planning anything new.
-1. Intake the ticket/incident, form hypotheses, plan which subagents to dispatch.
+1. Intake the ticket/incident, **interrogate itself until every question is
+   answered or parked**, write the **full** Direction Brief to `plan.md`,
+   **show a live status card + compact brief in chat**, **steer** (`Go` /
+   `Skip` / `Wrong service`) then dispatch — never all specialists by default.
 2. Dispatch **independent** subagents (each works alone from its own evidence; they do not
    see each other's conclusions, so they are not biased/distracted).
 3. **Challenge protocol**: the orchestrator cross-examines each subagent's findings using
@@ -278,3 +281,44 @@ The following **supersedes** the original wording in §3.1 step 0 and §3.4
    ≤ ~3 sentences) between symptom signature and root cause(s), written
    specifically to give semantic matching enough substance to identify similar
    prior incidents.
+
+**2026-08-13 — Visible direction & self-interrogation** (spec touchpoints
+FR-004 step 1, FR-008, FR-058, FR-059, US1, SC-011):
+
+The following **supersedes** the original wording in §3.1 step 1 without
+rewriting the rest of that section in place. §3.1 step 1 in this file
+already reflects the new wording.
+
+1. **Self-interrogation** — Before any specialist dispatch, the orchestrator
+   MUST ask **itself** questions covering failure vs symptom, scope, time &
+   change, correlation, hypotheses, evidence map, agent selection, and the
+   cost of being wrong. It keeps asking until every question is **ANSWERED**
+   or **PARKED** (UNKNOWN with a named owner: subagent, playbook query, or
+   user). It MUST NOT invent facts to close questions. Cap 16; leftovers
+   stay PARKED. This is self-talk, not a user interview — ask the user only
+   for PARKED items they alone can answer.
+2. **Visible Direction Brief** — The same content is shown in the session
+   and written to `plan.md` before dispatch: problem framing, interrogation
+   log, ranked hypotheses with confirm/kill tests, agents **sending now**
+   (with missions) and **not sending yet** (with reasons), and still-unknown
+   items. Do not wait for a generic "OK". Stop and ask the user only if
+   framing is UNKNOWN or a PARKED question is user-owned. If the user
+   redirects, revise the brief before dispatching. Repeat a short
+   interrogation before challenge-protocol follow-up dispatches.
+
+**2026-08-14 — Situational how-to memory (FR-060)**:
+
+Join maps and correlation field names are **not** a preflight and **not**
+a user interview. A case that is local to code may never need them. A later
+case that must join systems **discovers** the map with read-only rights, then
+writes a **Reusable how-to** row. The next case that needs the same join
+reuses that row (`reused from <case-id>`) instead of rediscovering names.
+`profile.md` Correlation keys are a cache only.
+
+**2026-08-14 — Live status card + compact steer (FR-061)**:
+
+Chat is the on-call UI. The orchestrator posts a one-screen status card
+(problem, sending, skipped, latest) and a compact Direction Brief, then
+**ends the turn** so the user can steer (`Go` / `Skip <agent>` / `Wrong
+service`). Skip the wait only on explicit proceed in the ticket. The full
+Q→A log stays in `plan.md`. Refresh **Latest** as specialists run.

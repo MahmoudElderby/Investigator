@@ -41,6 +41,7 @@ export const INVESTIGATOR_TEMPLATE_FILES = [
   'cases/artifacts/evidence-ledger.md.tpl',
   'cases/artifacts/challenge-log.md.tpl',
   'cases/artifacts/report.md.tpl',
+  'cases/artifacts/status.md.tpl',
   'memory/orchestrator.md.tpl',
   'memory/inv-log-rca.md.tpl',
   'memory/inv-data-rca.md.tpl',

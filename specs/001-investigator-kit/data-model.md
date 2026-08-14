@@ -96,15 +96,17 @@ No credentials (FR-027).
 
 | Property | Rule |
 |----------|------|
-| Format | Dated bullet lessons |
-| Write trigger | Subagent correction or orchestrator cross-case lesson (FR-020) |
+| Format | Dated bullets plus a **Reusable how-to** table (when needed / what / where / learned-in case id) |
+| Write trigger | Subagent correction, new how-to discovery on case close, or orchestrator cross-case lesson (FR-020, FR-060) |
+| Reuse | When a later case needs the same join or fetch path, start from the matching how-to row — do not rediscover |
+| Situational | A case that needed no join writes no correlation how-to |
 | Secrets | FR-030 redaction before write |
 
 ### 4.2 Playbook memory (`playbook-memory/<tool>.md`)
 
 Starter files: `elastic`, `mssql`, `redis`, `k8s-logs` (+ onboarded tools).
 
-Tool-truth lessons that travel with playbook skills (BRIEF §3.4).
+Tool-truth lessons that travel with playbook skills (BRIEF §3.4), including Reusable how-to rows for query shapes learned on cases that needed them.
 
 ---
 
@@ -138,7 +140,8 @@ Markdown table; **column order fixed** (FR-021):
 | File | Purpose |
 |------|---------|
 | `ticket.md` | Original incident intake |
-| `plan.md` | Hypotheses, subagent dispatch plan, **prior-case citations + match reasoning** |
+| `plan.md` | Full Direction Brief (audit), dispatch plan, prior-case citations, optional follow-up direction |
+| `status.md` | Live status card shown in chat (problem, phase, sending, skipped, latest) |
 | `evidence-ledger.md` | Claims with DECLARED/OBSERVED/INFERRED/UNKNOWN + evidence links |
 | `challenge-log.md` | Cross-examination and contradiction resolution |
 | `report.md` | Final RCA per report contract |
@@ -146,9 +149,9 @@ Markdown table; **column order fixed** (FR-021):
 **Case lifecycle**:
 
 ```text
-OPEN → INTAKE → DISPATCH → CHALLENGE → REPORT → CLOSE
-  │                                      │
-  └─ step 0: semantic index lookup ──────┘
+OPEN → INTAKE → INTERROGATE → STEER (status card) → DISPATCH → CHALLENGE → REPORT → CLOSE
+  │              full brief in plan.md; compact card in chat            │
+  └─ step 0: semantic index lookup ─────────────────────────────────────┘
 ```
 
 On CLOSE: append index row, update memories (FR-009).
@@ -178,7 +181,7 @@ Each claim in `evidence-ledger.md`:
 
 | Skill | Role |
 |-------|------|
-| `investigator` | Orchestrator SOP |
+| `investigator` | Orchestrator SOP, self-interrogation, visible Direction Brief |
 | `investigator-init` | First-run interview |
 | `investigator-add-agent` | Post-init tool onboarding |
 
